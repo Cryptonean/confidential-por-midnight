@@ -1,16 +1,14 @@
 # Confidential Proof of Reserves on Midnight
 
-**Rise In — New Moon to Full, Level 1 submission**
+**Rise In : New Moon to Full, Level 1 submission**
 
 Prove `Σ assets ≥ Σ liabilities` in zero-knowledge without revealing any customer balance. Customer liabilities live in a private Merkle-sum tree; the Compact circuit publishes only a salted root, a reserves snapshot, a slot, and a boolean `solvent` verdict via `disclose()`. The total liabilities value never reaches the ledger.
-
-This repo is the Level 1 entry point. The full system (API, dashboard, Cardano anchor) lives in [Cryptonean/Midnight-project](https://github.com/Cryptonean/Midnight-project).
 
 ---
 
 ## Product idea
 
-Custodians need to prove solvency after FTX, but publishing a full balance sheet leaks every customer's holdings. This project lets an exchange prove **"my reserves cover my liabilities"** while keeping individual balances private. A lying custodian cannot publish `solvent=true` unless the committed liabilities really sum to at most the stated reserves — inflate a hidden liability and the proof fails.
+Custodians need to prove solvency after FTX, but publishing a full balance sheet leaks every customer's holdings. This project lets an exchange prove **"my reserves cover my liabilities"** while keeping individual balances private. A lying custodian cannot publish `solvent=true` unless the committed liabilities really sum to at most the stated reserves inflate a hidden liability and the proof fails.
 
 ---
 
@@ -39,7 +37,7 @@ pnpm build:contract   # compact compile → contract/managed/
 pnpm test             # vitest: runs proveSolvency in the simulator
 ```
 
-`contract/managed/` is gitignored — you must run `pnpm build:contract` before tests.
+`contract/managed/` is gitignored run `pnpm build:contract` before tests. The fast compile uses `--skip-zk`; full PLONK keys are generated when you deploy on-chain.
 
 ---
 
@@ -81,7 +79,7 @@ These never appear on the ledger; they are supplied at proof time:
 
 ## Preprod deployment
 
-Deployed from the full monorepo pipeline (`prove-preprod` on Midnight Preprod):
+Live on Midnight Preprod:
 
 | | |
 |---|---|
@@ -106,12 +104,10 @@ query {
 
 ## Screenshots
 
-See [`docs/screenshots/`](docs/screenshots/) for Level 1 submission images:
+Level 1 submission proof images:
 
-- `compile-output.png` — successful `pnpm build:contract`
-- `preprod-deploy.png` — Preprod contract address proof
-
-Init placeholders (`.init.txt`) describe what to capture until PNGs are added.
+- [`docs/screenshots/compile-output.png`](docs/screenshots/compile-output.png) — successful `pnpm build:contract`
+- [`docs/screenshots/preprod-deploy.png`](docs/screenshots/preprod-deploy.png) — Preprod contract verified on the indexer
 
 ---
 
@@ -128,4 +124,4 @@ docs/screenshots/          Submission screenshots
 
 ## License
 
-Apache 2.0 (match your main repo if different)
+Apache 2.0
