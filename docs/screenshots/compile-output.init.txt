@@ -1,0 +1,9 @@
+
+> confidential-por-midnight@0.1.0 build:contract
+> compact compile --skip-zk contract/src/por.compact contract/managed
+
+Artifacts generated:
+  contract/managed/contract/index.js
+  contract/managed/zkir/proveSolvency.zkir
+
+Capture a terminal screenshot of `pnpm build:contract` and save as compile-output.png.

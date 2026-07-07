@@ -1,0 +1,31 @@
+# preprod-deploy.init.txt — replace with preprod-deploy.png when ready
+
+Verified via Midnight Preprod indexer (2026-07-07):
+
+POST https://indexer.preprod.midnight.network/api/v4/graphql
+
+query {
+  contractAction(address: "0518e4dd6290efef2b8bca3edc38092ff3cbaa14d81575c93109bcb88c7f3acf") {
+    __typename
+    transaction { hash block { height timestamp } }
+  }
+}
+
+Response:
+{
+  "data": {
+    "contractAction": {
+      "__typename": "ContractCall",
+      "transaction": {
+        "hash": "aa042216bcd05533d4f67c8461a0e5c58ce8a62c5012b25f8b70dab6c116975d",
+        "block": { "height": 1375054, "timestamp": 1782360672000 }
+      }
+    }
+  }
+}
+
+Contract: 0518e4dd6290efef2b8bca3edc38092ff3cbaa14d81575c93109bcb88c7f3acf
+Network:  Midnight Preprod
+Verdict:  solvent=true (from full monorepo prove-preprod run)
+
+Capture a screenshot of this query/response or the explorer UI and save as preprod-deploy.png.
