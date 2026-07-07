@@ -1,7 +1,7 @@
 node_modules/
 
-# Compact compiler output — regenerate with `pnpm build:contract`
-contract/managed/
+# Compact compiler output is committed as proof of a successful compile
+# (regenerate with `pnpm build:contract`). Only the macOS sidecars below are excluded.
 
 # macOS metadata (exFAT sidecars break ZK key-gen on external drives)
 .DS_Store
