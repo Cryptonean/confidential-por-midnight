@@ -1,35 +1,55 @@
 # Confidential Proof of Reserves on Midnight
 
-**Rise In : New Moon to Full, Level 1 submission**
+**Rise In : New Moon to Full** — Level 1 circuit + **Level 2 browser DApp**
 
 Prove `Σ assets ≥ Σ liabilities` in zero-knowledge without revealing any customer balance. Customer liabilities live in a private Merkle-sum tree; the Compact circuit publishes only a salted root, a reserves snapshot, a slot, and a boolean `solvent` verdict via `disclose()`. The total liabilities value never reaches the ledger.
 
+| Track | Location | Live |
+|-------|----------|------|
+| **Level 1** — Compact circuit + simulator tests | `contract/`, `src/`, `test/` | Preprod contract below |
+| **Level 2** — Lace browser DApp (deploy + prove from frontend) | [`browser/`](./browser/) | https://por-browser.netlify.app |
+
+**Level 2 submission checklist:** [`browser/SUBMISSION.md`](./browser/SUBMISSION.md)
+
 ---
 
-## Product idea
+## Level 2 — Browser DApp (Lace + Preprod)
 
-Custodians need to prove solvency after FTX, but publishing a full balance sheet leaks every customer's holdings. This project lets an exchange prove **"my reserves cover my liabilities"** while keeping individual balances private. A lying custodian cannot publish `solvent=true` unless the committed liabilities really sum to at most the stated reserves inflate a hidden liability and the proof fails.
+The **`browser/`** folder is a standalone React + Vite DApp that:
+
+- Connects / disconnects **Lace** or **1AM** on Preprod
+- **Deploys** a fresh `proveSolvency` contract from the browser
+- Calls **`proveSolvency`** with a ZK proof (ProofStation or local Docker)
+- Shows **observable privacy** — liabilities stay in the witness; only root + solvent flag go on-chain
+
+```bash
+cd browser
+pnpm install
+pnpm build:zk          # compile N=8 browser circuit (~18 MB prover)
+cp .env.example .env   # VITE_NETWORK_ID=preprod
+pnpm dev               # http://localhost:5175
+```
+
+| | |
+|---|---|
+| **Live demo** | https://por-browser.netlify.app |
+| **Privacy claim** | [`browser/README.md#privacy-claim`](./browser/README.md#privacy-claim) |
+| **Deploy to Netlify** | [`browser/DEPLOY.md`](./browser/DEPLOY.md) |
+| **Commit plan (≥8)** | [`browser/COMMITS.md`](./browser/COMMITS.md) |
 
 ---
 
-## Prerequisites
+## Level 1 — Circuit + simulator
+
+### Prerequisites
 
 | Tool | Version |
 |---|---|
 | Node.js | 22+ |
 | pnpm | 10+ |
 | Compact CLI | 0.31.x |
-| Docker | optional (proof server, for full ZK deploy) |
 
-Install Compact from [Midnight docs](https://docs.midnight.network/). Proof server (optional):
-
-```bash
-docker run -p 6300:6300 midnightntwrk/proof-server
-```
-
----
-
-## Quickstart
+### Quickstart
 
 ```bash
 pnpm install
@@ -37,49 +57,19 @@ pnpm build:contract   # compact compile → contract/managed/
 pnpm test             # vitest: runs proveSolvency in the simulator
 ```
 
-`contract/managed/` is gitignored run `pnpm build:contract` before tests. The fast compile uses `--skip-zk`; full PLONK keys are generated when you deploy on-chain.
+`contract/managed/` is gitignored — run `pnpm build:contract` before tests.
 
----
+### Public state vs private witness
 
-## Public state vs private witness
+See [`contract/src/por.compact`](contract/src/por.compact).
 
-The `proveSolvency` circuit in [`contract/src/por.compact`](contract/src/por.compact) separates what stays private from what is deliberately published.
+| Public ledger | Private witness |
+|---------------|-----------------|
+| `solvent`, `liabilitiesRoot`, `reservesSnapshot`, `reservesSlot`, `owner` | Customer balances, leaf salts, full Merkle tree |
 
-### Public ledger (`export ledger`)
+**Never published:** total liabilities value — only `disclose(totalLiabilities <= reserves)` becomes the public boolean.
 
-These fields are written to the on-chain ledger after a successful proof:
-
-| Field | Meaning |
-|---|---|
-| `owner` | Custodian identity (hash of secret key, set at deploy) |
-| `liabilitiesRoot` | Salted Merkle-sum root — binds liabilities without revealing balances |
-| `reservesSnapshot` | Public reserves figure passed into the circuit |
-| `reservesSlot` | Timestamp anchor for anti-replay |
-| `solvent` | `disclose(totalLiabilities <= reserves)` — boolean only |
-| `published` | Whether a snapshot has been published |
-
-### Private witnesses
-
-These never appear on the ledger; they are supplied at proof time:
-
-| Witness | Role |
-|---|---|
-| `custodianSecretKey` | Proves caller is the owner |
-| `treeHashes` | Full Merkle-sum tree (127 nodes) |
-| `treeSums` | Sum heap verified by per-node assertions |
-| `leafBalances` | 64 customer balances (zero-padded) |
-| `leafSalts` | Per-leaf blinding for salted commitments |
-
-### What `disclose()` controls
-
-- **Published:** `liabilitiesRoot`, `reservesSnapshot`, `reservesSlot`, `solvent`
-- **Never published:** `sums[0]` (total liabilities) — only the comparison `sums[0] <= reserves` becomes the public boolean
-
----
-
-## Preprod deployment
-
-Live on Midnight Preprod:
+### Level 1 Preprod deployment
 
 | | |
 |---|---|
@@ -88,35 +78,19 @@ Live on Midnight Preprod:
 | **Block** | 1,375,054 |
 | **Verdict** | `solvent=true`, `reserves=1,875,000,000` |
 
-Verify on the indexer:
-
-```graphql
-# POST https://indexer.preprod.midnight.network/api/v4/graphql
-query {
-  contractAction(address: "0518e4dd6290efef2b8bca3edc38092ff3cbaa14d81575c93109bcb88c7f3acf") {
-    __typename
-    transaction { hash block { height timestamp } }
-  }
-}
-```
-
----
-
-## Screenshots
-
-Level 1 submission proof images:
-
-- [`docs/screenshots/compile-output.png`](docs/screenshots/compile-output.png) — successful `pnpm build:contract`
-- [`docs/screenshots/preprod-deploy.png`](docs/screenshots/preprod-deploy.png) — Preprod contract verified on the indexer
-
 ---
 
 ## Project layout
 
 ```
-contract/src/por.compact   Compact solvency circuit
-src/                       Witnesses, tree builder, simulator
-test/solvency.test.ts      Circuit execution tests
+browser/                   Level 2 — Lace DApp (React + Vite + Netlify)
+  compact/por-browser.compact
+  src/wallet/              connect / disconnect
+  src/por/                 deploy + proveSolvency
+  src/components/          PrivacyPanel
+contract/src/por.compact   Level 1 — N=64 production circuit
+src/                       Level 1 — witnesses, tree, simulator
+test/solvency.test.ts      Level 1 — circuit tests
 docs/screenshots/          Submission screenshots
 ```
 
