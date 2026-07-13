@@ -85,6 +85,21 @@ pnpm --filter @por/por-browser verify:preprod -- <CONTRACT_ADDRESS_HEX>
 
 Record your address in `submission.preprod.json` (template: `submission.preprod.example.json`).
 
+### Level 2 Preprod deployment (browser)
+
+| | |
+|---|---|
+| **Network** | Midnight Preprod |
+| **Contract** | `3a6fde1659e91c4d7fac10b5d79adb04fcd915b46958cc739681e760522b2cab` |
+| **Deploy tx** | `92d95e36b827f395ab873d47422b225ae44e3a4d1cb5d38e4bcced9da91d29dd` (block 1,638,861) |
+| **proveSolvency tx** | `39e157b87fb9c2485a2ec21bcd5388a2e3b80146909049b6953a915723024826` (block 1,638,877) |
+
+Verify independently against the indexer:
+
+```bash
+pnpm --filter @por/por-browser verify:preprod -- 3a6fde1659e91c4d7fac10b5d79adb04fcd915b46958cc739681e760522b2cab
+```
+
 ---
 
 ## Build & deploy
