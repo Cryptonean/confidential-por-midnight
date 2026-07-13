@@ -4,6 +4,8 @@
 
 Prove `Σ assets ≥ Σ liabilities` in zero-knowledge without revealing any customer balance. Customer liabilities live in a private Merkle-sum tree; the Compact circuit publishes only a salted root, a reserves snapshot, a slot, and a boolean `solvent` verdict via `disclose()`. The total liabilities value never reaches the ledger.
 
+### Recording = https://drive.google.com/file/d/12lk6iUl56ojJDjkDTkxuL_Rv7OTcx7sl/view?usp=sharing
+
 | Track | Location | Live |
 |-------|----------|------|
 | **Level 1** — Compact circuit + simulator tests | `contract/`, `src/`, `test/` | Preprod contract below |
