@@ -6,7 +6,7 @@ import {
   deployPorContract,
   joinPorContractWithTimeout,
   readPorState,
-  submitPorProof,
+  submitPorProofWithRetry,
   type DeployResult,
   type SolvencyState,
   type SubmitProofResult,
@@ -357,7 +357,7 @@ export function usePorSession(): PorSession {
           if (connectedAPI) {
             stopKeepalive = startWalletKeepalive(connectedAPI, 45_000);
           }
-          const tx = await submitPorProof(deployed, reserves, slot);
+          const tx = await submitPorProofWithRetry(deployed, reserves, slot);
           setLastTx(tx);
           await refresh();
         } finally {

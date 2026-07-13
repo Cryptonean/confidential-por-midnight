@@ -9,6 +9,7 @@ import { makeWitnesses } from '../browser-circuit/witnesses.js';
 import { Contract, ledger } from '@por/contract-gen';
 import type { PorProviders } from '../providers/buildBrowserProviders';
 import { describeLaceTxError } from '../wallet/walletReadiness';
+import { nextSlot } from '../demo/demoTree.js';
 
 export interface DeployResult {
   contractAddress: string;
@@ -127,6 +128,78 @@ export async function submitPorProof(
   } catch (error) {
     throw describeLaceTxError(error, 'prove');
   }
+}
+
+const PROVE_TIMEOUT_MS = 300_000;
+
+/**
+ * Some wallets (1AM) can fail internally and show their own error popup without ever
+ * relaying a response back to the page, leaving the underlying promise unresolved forever.
+ * Without this guard the UI's busy state gets stuck permanently after such a failure.
+ */
+export async function submitPorProofWithTimeout(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deployed: any,
+  reserves: bigint,
+  slot: bigint,
+  timeoutMs = PROVE_TIMEOUT_MS,
+): Promise<SubmitProofResult> {
+  return Promise.race([
+    submitPorProof(deployed, reserves, slot),
+    new Promise<never>((_, reject) => {
+      setTimeout(
+        () =>
+          reject(
+            new Error(
+              `Timed out after ${timeoutMs / 1000}s waiting for the wallet to respond. ` +
+                'The wallet may have shown its own error popup without notifying this page — ' +
+                'check the wallet extension, then Refresh ledger to see if the proof actually landed before retrying.',
+            ),
+          ),
+        timeoutMs,
+      );
+    }),
+  ]);
+}
+
+const RETRYABLE_SUBMIT_RE = /error 182|intent expired or duplicate|IntentAlreadyExists|IntentTtlExpired/i;
+const PROVE_RETRY_DELAY_MS = 5_000;
+const PROVE_MAX_ATTEMPTS = 3;
+
+/**
+ * Preprod occasionally rejects a proveSolvency submission with error 182 (intent expired
+ * or duplicate) when the fee-paying DUST UTXO hasn't settled from a prior transaction yet.
+ * This is transient — waiting briefly and resubmitting with a fresh slot (nonce) usually
+ * succeeds without any user action, so we retry automatically instead of surfacing it.
+ */
+export async function submitPorProofWithRetry(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deployed: any,
+  reserves: bigint,
+  initialSlot: bigint,
+  maxAttempts = PROVE_MAX_ATTEMPTS,
+): Promise<SubmitProofResult> {
+  let slot = initialSlot;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await submitPorProofWithTimeout(deployed, reserves, slot);
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      if (attempt < maxAttempts && RETRYABLE_SUBMIT_RE.test(message)) {
+        console.warn(
+          `[por-browser] proveSolvency: retrying after transient rejection (attempt ${attempt}/${maxAttempts})`,
+          error,
+        );
+        await new Promise((resolve) => setTimeout(resolve, PROVE_RETRY_DELAY_MS * attempt));
+        slot = nextSlot(slot);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
 }
 
 export async function readPorState(
