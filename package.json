@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Confidential Proof of Reserves — Midnight Compact circuit (Level 1) + Lace browser DApp (Level 2)",
-  "engines": { "node": ">=22" },
+  "description": "Solvency Eligibility Gate on Midnight — Compact circuit + Lace browser DApp (Rise In Level 3)",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build:contract": "compact compile --skip-zk contract/src/por.compact contract/managed",
     "test": "vitest run",
@@ -12,7 +14,9 @@
     "browser:dev": "pnpm --dir browser dev",
     "browser:build": "pnpm --dir browser build",
     "browser:build:zk": "pnpm --dir browser build:zk",
-    "browser:deploy": "pnpm --dir browser deploy:netlify"
+    "browser:deploy": "pnpm --dir browser deploy:netlify",
+    "test:browser": "pnpm --dir browser test",
+    "test:all": "pnpm test && pnpm test:browser"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0",

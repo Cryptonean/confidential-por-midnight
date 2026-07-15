@@ -1,17 +1,33 @@
-# Confidential Proof of Reserves on Midnight
+# Solvency Eligibility Gate on Midnight
 
-**Rise In : New Moon to Full** — Level 1 circuit + **Level 2 browser DApp**
+**Rise In : New Moon to Full** — Level 3 **Age / Eligibility Gate** (builds on Level 1 circuit + Level 2 browser DApp)
 
-Prove `Σ assets ≥ Σ liabilities` in zero-knowledge without revealing any customer balance. Customer liabilities live in a private Merkle-sum tree; the Compact circuit publishes only a salted root, a reserves snapshot, a slot, and a boolean `solvent` verdict via `disclose()`. The total liabilities value never reaches the ledger.
-
-### Recording = https://drive.google.com/file/d/12lk6iUl56ojJDjkDTkxuL_Rv7OTcx7sl/view?usp=sharing
+Prove a **private liability total ≤ public reserves** in zero-knowledge without revealing balances. Same selective-disclosure pattern as an age/eligibility gate: observers learn only pass/fail (`solvent`), reserves/slot, and a Merkle commitment root.
 
 | Track | Location | Live |
 |-------|----------|------|
+| **Level 3** — Eligibility Gate framing, tests, CI | [`browser/`](./browser/) | https://por-browser.netlify.app |
 | **Level 1** — Compact circuit + simulator tests | `contract/`, `src/`, `test/` | Preprod contract below |
-| **Level 2** — Lace browser DApp (deploy + prove from frontend) | [`browser/`](./browser/) | https://por-browser.netlify.app |
+| **Level 2** — Lace browser DApp (deploy + prove) | [`browser/`](./browser/) | https://por-browser.netlify.app |
 
-**Level 2 submission checklist:** [`browser/SUBMISSION.md`](./browser/SUBMISSION.md)
+**Level 3 proposal:** [`browser/PRODUCT_PROPOSAL.md`](./browser/PRODUCT_PROPOSAL.md)  
+**Level 3 checklist:** [`browser/SUBMISSION.md`](./browser/SUBMISSION.md)
+
+```bash
+pnpm --dir browser test    # ≥3 Level 3 unit tests
+pnpm test                  # Level 1 simulator (needs Compact CLI)
+```
+
+### Prior recording (Level 2) = https://drive.google.com/file/d/12lk6iUl56ojJDjkDTkxuL_Rv7OTcx7sl/view?usp=sharing
+
+---
+
+## Privacy model
+
+**Observer can learn:** `solvent`, `reservesSnapshot`, `reservesSlot`, `liabilitiesRoot`, `owner`  
+**Observer cannot learn:** exact liability total, per-customer balances/salts, full Merkle witness, custodian secret key  
+
+Details: [`browser/README.md#privacy-model`](./browser/README.md#privacy-model)
 
 ---
 
@@ -35,7 +51,7 @@ pnpm dev               # http://localhost:5175
 | | |
 |---|---|
 | **Live demo** | https://por-browser.netlify.app |
-| **Privacy claim** | [`browser/README.md#privacy-claim`](./browser/README.md#privacy-claim) |
+| **Privacy claim** | [`browser/README.md#privacy-model`](./browser/README.md#privacy-model) |
 | **Deploy to Netlify** | [`browser/DEPLOY.md`](./browser/DEPLOY.md) |
 | **Commit plan (≥8)** | [`browser/COMMITS.md`](./browser/COMMITS.md) |
 
@@ -94,10 +110,11 @@ See [`contract/src/por.compact`](contract/src/por.compact).
 ## Project layout
 
 ```
-browser/                   Level 2 — Lace DApp (React + Vite + Netlify)
+browser/                   Level 2/3 — Lace DApp (React + Vite + Netlify)
   compact/por-browser.compact
   src/wallet/              connect / disconnect
   src/por/                 deploy + proveSolvency
+  src/eligibility/         Level 3 threshold helper + tests
   src/components/          PrivacyPanel
 contract/src/por.compact   Level 1 — N=64 production circuit
 src/                       Level 1 — witnesses, tree, simulator
