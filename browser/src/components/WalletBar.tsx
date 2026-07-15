@@ -49,8 +49,8 @@ export function WalletBar({
   return (
     <header className="wallet-bar">
       <div className="wallet-bar__brand">
-        <span className="wallet-bar__kicker">Midnight · Level 2</span>
-        <h1>Confidential Proof of Reserves</h1>
+        <span className="wallet-bar__kicker">Midnight · Level 3 · Eligibility Gate</span>
+        <h1>Solvency Eligibility Gate</h1>
       </div>
       <div className="wallet-bar__status">
         <span className="pill">network: {networkId}</span>

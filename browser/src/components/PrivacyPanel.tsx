@@ -23,10 +23,10 @@ interface PrivacyPanelProps {
 export function PrivacyPanel({ totalLiabilities, customerCount, ledger }: PrivacyPanelProps) {
   const rows: PrivacyRow[] = [
     {
-      field: 'Solvent verdict',
+      field: 'Eligibility verdict (solvent)',
       visibility: 'public',
-      value: ledger ? (ledger.solvent ? '✓ Solvent' : '✗ Insolvent') : '—',
-      note: 'Published on Midnight ledger after proof',
+      value: ledger ? (ledger.solvent ? '✓ Eligible' : '✗ Not eligible') : '—',
+      note: 'Observer can learn: pass/fail of privateTotal ≤ public reserves',
     },
     {
       field: 'Reserves snapshot',
@@ -56,21 +56,21 @@ export function PrivacyPanel({ totalLiabilities, customerCount, ledger }: Privac
       field: 'Total liabilities',
       visibility: 'private',
       value: `${formatLovelace(totalLiabilities)} (${customerCount} customers)`,
-      note: 'Used inside the ZK circuit — never written to the public ledger',
+      note: 'Observer cannot learn: private threshold input — never on ledger',
     },
     {
       field: 'Per-customer balances',
       visibility: 'private',
       value: `${customerCount} leaf values in witness`,
-      note: 'Only the prover sees individual balances; chain sees root + sum check',
+      note: 'Observer cannot learn: individual balances stay in the ZK witness',
     },
   ];
 
   return (
     <section className="panel privacy-panel">
       <header>
-        <h2>Privacy boundary</h2>
-        <p>What Midnight publishes vs what stays in the proof.</p>
+        <h2>Privacy model</h2>
+        <p>What an observer can learn (on-chain) vs cannot learn (witness only).</p>
       </header>
       <div className="privacy-grid">
         {rows.map((row) => (

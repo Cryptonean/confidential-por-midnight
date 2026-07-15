@@ -112,27 +112,27 @@ export function App() {
       <main className="layout">
         <section className="panel">
           <header>
-            <h2>Demo sandbox</h2>
+            <h2>Eligibility sandbox</h2>
             <p>
-              This is a <strong>demo only</strong> — sample customer balances and synthetic reserves on
-              Midnight preprod, not real exchange data. Reserves are{' '}
-              {insolvent ? 'set below' : 'set above'} liabilities so you can test solvent vs insolvent
-              proofs.
+              Age / Eligibility Gate demo — prove a <strong>private</strong> liability total meets a{' '}
+              <strong>public</strong> reserves threshold without revealing balances. Reserves are{' '}
+              {insolvent ? 'set below' : 'set above'} liabilities so you can test eligible vs not
+              eligible.
             </p>
           </header>
           <div className="scenario-stats">
             <div>
-              <span className="label">Total liabilities (private)</span>
+              <span className="label">Private total (witness)</span>
               <strong>{formatLovelace(demo.totalLiabilities)}</strong>
             </div>
             <div>
-              <span className="label">Reserves to prove</span>
+              <span className="label">Public threshold (reserves)</span>
               <strong>{formatLovelace(reserves)}</strong>
             </div>
             <div>
-              <span className="label">Expected verdict</span>
+              <span className="label">Expected eligibility</span>
               <strong className={insolvent ? 'text-failed' : 'text-verified'}>
-                {insolvent ? 'Insolvent' : 'Solvent'}
+                {insolvent ? 'Not eligible' : 'Eligible'}
               </strong>
             </div>
           </div>
@@ -142,7 +142,7 @@ export function App() {
               checked={insolvent}
               onChange={(e) => setInsolvent(e.target.checked)}
             />
-            Submit insolvent proof (reserves &lt; liabilities)
+            Fail eligibility (reserves &lt; private total)
           </label>
           <div className="action-row">
             <button
@@ -175,7 +175,7 @@ export function App() {
                 )
               }
             >
-              proveSolvency from browser
+              Check eligibility (proveSolvency)
             </button>
             <button
               type="button"
@@ -204,8 +204,8 @@ export function App() {
 
       <footer className="footer">
         <p>
-          Circuit runs in your browser via Lace. Customer balances never leave the witness — only
-          the solvent flag, reserves snapshot, and liabilities root are public.
+          Eligibility gate via Lace: observers learn pass/fail + reserves + commitment root — not
+          the private liability total or per-customer balances.
         </p>
       </footer>
     </div>
