@@ -11,7 +11,7 @@
 | Live demo | ✅ | https://por-browser.netlify.app (redeploy after Level 3 framing) |
 | ≥3 tests passing | ✅ | `pnpm --dir browser test` (eligibility + tree) |
 | Screenshot: tests | 📝 | Capture after confirm; store in `docs/screenshots/` |
-| CI/CD badge + passing runs | ⏳ | Phase C — `.github/workflows/ci.yml` |
+| CI/CD badge + passing runs | ✅ | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) + Actions badge |
 | Demo video (~1 min) | 📝 | [Script below](#demo-video-script-1-min) |
 | README privacy model | ✅ | [Privacy model](./README.md#privacy-model) |
 | Product proposal (idea list) | ✅ | [PRODUCT_PROPOSAL.md](./PRODUCT_PROPOSAL.md) |

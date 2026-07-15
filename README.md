@@ -1,5 +1,8 @@
 # Solvency Eligibility Gate on Midnight
 
+[![CI](https://github.com/cryptonean/confidential-por-midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/cryptonean/confidential-por-midnight/actions/workflows/ci.yml)
+
+
 **Rise In : New Moon to Full** — Level 3 **Age / Eligibility Gate** (builds on Level 1 circuit + Level 2 browser DApp)
 
 Prove a **private liability total ≤ public reserves** in zero-knowledge without revealing balances. Same selective-disclosure pattern as an age/eligibility gate: observers learn only pass/fail (`solvent`), reserves/slot, and a Merkle commitment root.
