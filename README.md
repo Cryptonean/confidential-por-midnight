@@ -21,10 +21,12 @@ Prove a **private liability total ≤ public reserves** in zero-knowledge withou
 | **CI runs** | [Actions run history](https://github.com/Cryptonean/confidential-por-midnight/actions) |
 | **Workflow file** | [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) |
 
+#### Level 3 Txhash =  https://explorer.1am.xyz/tx/04328f15a34c9e52fdaa0105095beea5b0e8310a22ae8f3e78eb57e60fa9f445?network=preprod & https://explorer.1am.xyz/tx/30d3ee74a43fcff072d23fbe274ca1b2a4480570db02cc0edeb84fc79c6ed027?network=preprod
 ```bash
 pnpm --dir browser test    # ≥3 Level 3 unit tests
 pnpm test                  # Level 1 simulator (needs Compact CLI)
 ```
+### Prior recording (Level 3) = https://drive.google.com/file/d/1fGKxiQmf072aqRLmS1a9AH0qIX2PM_PU/view?usp=sharing
 
 ### Prior recording (Level 2) = https://drive.google.com/file/d/12lk6iUl56ojJDjkDTkxuL_Rv7OTcx7sl/view?usp=sharing
 
