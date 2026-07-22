@@ -10,7 +10,7 @@
 # scripts/copy-zk-assets.sh and DEPLOY.md.
 
 [build]
-  command = "pnpm --filter @por/por-browser build"
+  command = "pnpm build"
   publish = "dist"
 
 [build.environment]

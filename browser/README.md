@@ -6,11 +6,12 @@ Lace-connected browser frontend that proves a **private liability total ≤ publ
 
 | | |
 |---|---|
-| **Live demo** | https://por-browser.netlify.app |
-| **Repository** | https://github.com/cryptonean/confidential-por-midnight |
+| **Live demo** | https://por-browser.netlify.app · [/app](https://por-browser.netlify.app/app) |
+| **Repository** | https://github.com/Cryptonean/confidential-por-midnight |
 | **Product proposal** | [PRODUCT_PROPOSAL.md](./PRODUCT_PROPOSAL.md) |
 | **Submission guide** | [SUBMISSION.md](./SUBMISSION.md) |
-| **CI** | Pending Phase C (GitHub Actions) |
+| **CI pipeline** | [Actions — CI workflow](https://github.com/Cryptonean/confidential-por-midnight/actions/workflows/ci.yml) |
+| **Workflow file** | [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml) |
 
 ```bash
 cd browser

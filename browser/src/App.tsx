@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { buildDemoTree, demoReserves, nextSlot } from './demo/demoTree';
 import { usePorSession } from './hooks/usePorSession';
 import { VERIFIER_MISMATCH_MESSAGE } from './contractStorage.js';
@@ -53,6 +54,13 @@ export function App() {
 
   return (
     <div className="app">
+      <div className="app-topnav">
+        <Link to="/" className="app-topnav__back">
+          ← Home
+        </Link>
+        <span className="app-topnav__label">Live eligibility app · Midnight Preprod</span>
+      </div>
+
       <WalletBar
         phase={session.walletPhase}
         error={session.walletError}
@@ -109,13 +117,19 @@ export function App() {
         </p>
       ) : null}
 
-      <main className="layout">
+      <ol className="app-quick-steps">
+        <li>Connect wallet (Preprod)</li>
+        <li>Deploy fresh contract</li>
+        <li>Check eligibility</li>
+        <li>Refresh ledger → privacy panel</li>
+      </ol>
+
+      <main className="layout" id="try-it">
         <section className="panel">
           <header>
             <h2>Eligibility sandbox</h2>
             <p>
-              Age / Eligibility Gate demo — prove a <strong>private</strong> liability total meets a{' '}
-              <strong>public</strong> reserves threshold without revealing balances. Reserves are{' '}
+              Prove a private liability total meets a public reserves threshold. Reserves are{' '}
               {insolvent ? 'set below' : 'set above'} liabilities so you can test eligible vs not
               eligible.
             </p>
@@ -154,9 +168,7 @@ export function App() {
                 session.contractJoining ||
                 (session.walletReadiness !== null && !session.walletReadiness.ready)
               }
-              onClick={() =>
-                void run('deploy', () => session.deploy(demo.witnessInputs))
-              }
+              onClick={() => void run('deploy', () => session.deploy(demo.witnessInputs))}
             >
               Deploy fresh contract
             </button>
@@ -204,8 +216,9 @@ export function App() {
 
       <footer className="footer">
         <p>
-          Eligibility gate via Lace: observers learn pass/fail + reserves + commitment root — not
-          the private liability total or per-customer balances.
+          Observers learn pass/fail + reserves + commitment root — not the private liability total or
+          per-customer balances.{' '}
+          <Link to="/#privacy">Privacy model on home →</Link>
         </p>
       </footer>
     </div>

@@ -1,7 +1,6 @@
 # Solvency Eligibility Gate on Midnight
 
-[![CI](https://github.com/cryptonean/confidential-por-midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/cryptonean/confidential-por-midnight/actions/workflows/ci.yml)
-
+[![CI](https://github.com/Cryptonean/confidential-por-midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/Cryptonean/confidential-por-midnight/actions/workflows/ci.yml)
 
 **Rise In : New Moon to Full** — Level 3 **Age / Eligibility Gate** (builds on Level 1 circuit + Level 2 browser DApp)
 
@@ -9,12 +8,18 @@ Prove a **private liability total ≤ public reserves** in zero-knowledge withou
 
 | Track | Location | Live |
 |-------|----------|------|
-| **Level 3** — Eligibility Gate framing, tests, CI | [`browser/`](./browser/) | https://por-browser.netlify.app |
+| **Level 3** — Eligibility Gate framing, tests, CI | [`browser/`](./browser/) | https://por-browser.netlify.app · [/app](https://por-browser.netlify.app/app) |
 | **Level 1** — Compact circuit + simulator tests | `contract/`, `src/`, `test/` | Preprod contract below |
 | **Level 2** — Lace browser DApp (deploy + prove) | [`browser/`](./browser/) | https://por-browser.netlify.app |
 
-**Level 3 proposal:** [`browser/PRODUCT_PROPOSAL.md`](./browser/PRODUCT_PROPOSAL.md)  
-**Level 3 checklist:** [`browser/SUBMISSION.md`](./browser/SUBMISSION.md)
+| Link | URL |
+|------|-----|
+| **Live demo** | https://por-browser.netlify.app |
+| **Product proposal** | [`browser/PRODUCT_PROPOSAL.md`](./browser/PRODUCT_PROPOSAL.md) |
+| **Submission checklist** | [`browser/SUBMISSION.md`](./browser/SUBMISSION.md) |
+| **CI pipeline** | [GitHub Actions — CI workflow](https://github.com/Cryptonean/confidential-por-midnight/actions/workflows/ci.yml) |
+| **CI runs** | [Actions run history](https://github.com/Cryptonean/confidential-por-midnight/actions) |
+| **Workflow file** | [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) |
 
 ```bash
 pnpm --dir browser test    # ≥3 Level 3 unit tests
@@ -25,12 +30,57 @@ pnpm test                  # Level 1 simulator (needs Compact CLI)
 
 ---
 
+## Product proposal
+
+**Chosen idea (from the provided list):** Age / Eligibility Gate  
+**Working title:** Solvency Eligibility Gate on Midnight
+
+Custodians must show they can cover customer liabilities without publishing every balance (or even the liability total). This Lace-connected Midnight dApp proves a **private liability total is ≤ a public reserves snapshot**. Observers learn only whether the custodian is **eligible** (`solvent`), plus a commitment root and reserves/slot — never per-customer balances or the exact sum.
+
+**Why this is Eligibility Gate:** same pattern as “age ≥ 18” without revealing age. Here the private value is the committed liability total; the public threshold is attested reserves.
+
+Full write-up: **[`browser/PRODUCT_PROPOSAL.md`](./browser/PRODUCT_PROPOSAL.md)**
+
+---
+
 ## Privacy model
 
-**Observer can learn:** `solvent`, `reservesSnapshot`, `reservesSlot`, `liabilitiesRoot`, `owner`  
-**Observer cannot learn:** exact liability total, per-customer balances/salts, full Merkle witness, custodian secret key  
+What an **observer** (public Midnight ledger + transaction metadata) **can** learn:
 
-Details: [`browser/README.md#privacy-model`](./browser/README.md#privacy-model)
+| Field | Meaning |
+|-------|---------|
+| `solvent` | Pass / fail eligibility verdict |
+| `reservesSnapshot` | Public reserves attested in the proof |
+| `reservesSlot` | Freshness / time anchor |
+| `liabilitiesRoot` | Merkle commitment to liabilities (not the balances) |
+| `owner` | Custodian public key hash |
+
+What an observer **cannot** learn:
+
+| Stays private (ZK witness only) |
+|---------------------------------|
+| Exact total liabilities |
+| Per-customer balances and leaf salts |
+| Full Merkle tree witness beyond the published root |
+| Custodian secret key |
+
+Demo UI may show sandbox balances for teaching; those values are **not** written on-chain. After prove, refresh the ledger — only the public fields above appear in contract state.
+
+Also documented in: [`browser/README.md#privacy-model`](./browser/README.md#privacy-model) and the live site privacy section.
+
+---
+
+## CI / CD pipeline
+
+Every push and pull request to `main` runs browser unit tests (eligibility + Merkle-sum):
+
+- **Workflow:** [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)
+- **Pipeline status / runs:** https://github.com/Cryptonean/confidential-por-midnight/actions/workflows/ci.yml
+- **Badge:** see top of this README
+
+```bash
+pnpm --dir browser test
+```
 
 ---
 
